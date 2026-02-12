@@ -1,0 +1,9 @@
+{
+  "name": "X-Clone",
+  "description": "A high-fidelity social media platform clone inspired by X (formerly Twitter), featuring a dark interface, real-time feed, AI-powered trend analysis, and responsive design.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
