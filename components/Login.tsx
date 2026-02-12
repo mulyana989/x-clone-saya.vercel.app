@@ -49,11 +49,15 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 overflow-hidden relative">
-      {/* Background Decor */}
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div className="absolute top-10 left-10 animate-bounce"><PixelChibi seed="star1" className="w-12 h-12" /></div>
-        <div className="absolute bottom-20 right-20 animate-pulse"><PixelChibi seed="star2" className="w-16 h-16" /></div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 flex flex-col items-center justify-center p-6 overflow-hidden relative" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(59,130,246,0.05) 35px, rgba(59,130,246,0.05) 70px)' }}>
+      {/* Pixel Art Background Grid */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-5 left-5 animate-bounce"><PixelChibi seed="pixel1" className="w-20 h-20 opacity-40" /></div>
+        <div className="absolute top-32 right-10 animate-pulse"><PixelChibi seed="pixel2" className="w-24 h-24 opacity-35" /></div>
+        <div className="absolute bottom-24 left-20 animate-bounce" style={{ animationDelay: '0.5s' }}><PixelChibi seed="pixel3" className="w-16 h-16 opacity-40" /></div>
+        <div className="absolute bottom-10 right-32 animate-pulse" style={{ animationDelay: '1s' }}><PixelChibi seed="pixel4" className="w-28 h-28 opacity-30" /></div>
+        <div className="absolute top-1/2 left-10 animate-bounce" style={{ animationDelay: '0.3s' }}><PixelChibi seed="pixel5" className="w-14 h-14 opacity-35" /></div>
+        <div className="absolute top-1/3 right-5 animate-pulse" style={{ animationDelay: '1.5s' }}><PixelChibi seed="pixel6" className="w-20 h-20 opacity-40" /></div>
       </div>
 
       <div className="z-10 flex flex-col items-center gap-6 max-w-sm w-full">
@@ -67,9 +71,9 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           </svg>
         </div>
 
-        <div className="text-center mb-2">
-          <h1 className="text-2xl font-black tracking-tighter text-gray-900" style={{ fontFamily: 'monospace' }}>MASUK KE PIXEL X</h1>
-          <p className="text-gray-600 text-xs">Silakan masukkan akun Member Anda.</p>
+        <div className="text-center mb-2 bg-white/80 backdrop-blur-sm px-6 py-4 rounded-lg border-2 border-blue-300">
+          <h1 className="text-2xl font-black tracking-widest text-blue-600" style={{ fontFamily: '"Courier New", monospace', textShadow: '2px 2px 0px rgba(59,130,246,0.3)' }}>MASUK KE<br/>PIXEL X</h1>
+          <p className="text-gray-600 text-xs font-bold mt-2 tracking-wider">SILAKAN MASUKKAN AKUN</p>
         </div>
 
         <form onSubmit={handleSubmit} className="w-full space-y-4">
