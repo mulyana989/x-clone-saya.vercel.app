@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
 import { UserRole } from '../types';
+import { authService } from '../services/authService';
 
 interface LoginProps {
-  onLogin: (username: string, role: UserRole) => void;
+  onLogin: (userId: string, role: UserRole) => void;
 }
 
 const PixelChibi: React.FC<{ seed: string, className?: string, style?: React.CSSProperties }> = ({ seed, className, style }) => (
@@ -16,36 +17,49 @@ const PixelChibi: React.FC<{ seed: string, className?: string, style?: React.CSS
 );
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
-    if (!username || !password) {
-      setError('Username dan Password wajib diisi!');
+
+    if (!email || !password) {
+      setError('Email dan Password wajib diisi!');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password minimal 6 karakter!');
       return;
     }
 
     setIsLoading(true);
 
-    // Simulasi proses autentikasi
-    setTimeout(() => {
-      let role: UserRole = 'member';
-      
-      // Easter egg/Secret login untuk role lain
-      if (username.toLowerCase() === 'admin' && password === 'admin123') {
-        role = 'developer';
-      } else if (username.toLowerCase().includes('vip') && password === 'vip123') {
-        role = 'vip';
+    if (isSignUp) {
+      const { user, error: authError } = await authService.register(email, password);
+      if (authError) {
+        setError(authError);
+        setIsLoading(false);
+        return;
       }
-
-      onLogin(username, role);
-      setIsLoading(false);
-    }, 1000);
+      if (user) {
+        onLogin(user.id, 'member');
+      }
+    } else {
+      const { user, error: authError } = await authService.signIn(email, password);
+      if (authError) {
+        setError(authError);
+        setIsLoading(false);
+        return;
+      }
+      if (user) {
+        onLogin(user.id, 'member');
+      }
+    }
   };
 
   return (
@@ -72,20 +86,20 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         </div>
 
         <div className="text-center mb-2 bg-white/80 backdrop-blur-sm px-6 py-4 rounded-lg border-2 border-blue-300">
-          <h1 className="text-2xl font-black tracking-widest text-blue-600" style={{ fontFamily: '"Courier New", monospace', textShadow: '2px 2px 0px rgba(59,130,246,0.3)' }}>MASUK KE<br/>PIXEL X</h1>
-          <p className="text-gray-600 text-xs font-bold mt-2 tracking-wider">SILAKAN MASUKKAN AKUN</p>
+          <h1 className="text-2xl font-black tracking-widest text-blue-600" style={{ fontFamily: '"Courier New", monospace', textShadow: '2px 2px 0px rgba(59,130,246,0.3)' }}>{isSignUp ? 'DAFTAR' : 'MASUK KE'}<br/>PIXEL X</h1>
+          <p className="text-gray-600 text-xs font-bold mt-2 tracking-wider">{isSignUp ? 'BUAT AKUN BARU' : 'SILAKAN MASUKKAN EMAIL'}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="w-full space-y-4">
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-gray-600 ml-1 uppercase">Username</label>
+            <label className="text-[10px] font-bold text-gray-600 ml-1 uppercase">Email</label>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="@username"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="nama@contoh.com"
               className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-all text-sm text-gray-900 placeholder-gray-400"
-              autoComplete="username"
+              autoComplete="email"
             />
           </div>
 
@@ -114,18 +128,23 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           >
             {isLoading ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : 'Masuk'}
+            ) : isSignUp ? 'Daftar' : 'Masuk'}
           </button>
         </form>
 
         <div className="flex flex-col items-center gap-4 mt-4 w-full">
-          <button className="text-blue-600 text-xs font-bold hover:underline">Lupa password?</button>
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex-1 h-[1px] bg-gray-300"></div>
-            <span className="text-[10px] text-gray-600">ATAU</span>
-            <div className="flex-1 h-[1px] bg-gray-300"></div>
-          </div>
-          <button className="w-full border border-gray-300 py-3 rounded-full text-sm font-bold text-gray-900 hover:bg-gray-50 transition-all">Daftar Akun Baru</button>
+          <button
+            type="button"
+            onClick={() => {
+              setIsSignUp(!isSignUp);
+              setError('');
+              setEmail('');
+              setPassword('');
+            }}
+            className="text-blue-600 text-xs font-bold hover:underline"
+          >
+            {isSignUp ? 'Sudah punya akun? Masuk' : 'Belum punya akun? Daftar'}
+          </button>
         </div>
 
         <div className="flex gap-4 mt-6 grayscale opacity-30">
