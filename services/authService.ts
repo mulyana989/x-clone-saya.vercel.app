@@ -144,11 +144,13 @@ export const authService = {
 
   onAuthStateChange(callback: (user: AuthUser | null) => void) {
     return supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        callback({ id: session.user.id, email: session.user.email || '' });
-      } else {
-        callback(null);
-      }
+      (() => {
+        if (session?.user) {
+          callback({ id: session.user.id, email: session.user.email || '' });
+        } else {
+          callback(null);
+        }
+      })();
     });
   },
 };
